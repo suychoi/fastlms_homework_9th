@@ -5,6 +5,7 @@ import com.example.zerobase.domain.ZerobaseCourseRepository;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -30,25 +31,31 @@ public class Homework {
     public List<ZerobaseCourse> getZerobaseCourse(String status) {
         // TODO: status가 일치하고, hidden = false 인 강의들이 조회되어야 함
 
-        List<ZerobaseCourse> listTest = repository.findAll();
-        List<ZerobaseCourse> list = null;
+        List<ZerobaseCourse> courseStateList = repository.findAll();
+        List list = new ArrayList<>();
 
-        for (int i = 0; i < listTest.size(); i++){
-            if(listTest.get(i).getStatus() == status && !listTest.get(i).isHidden()){
-                System.out.println("리스트 값 : " + listTest.get(i).getStatus());
-                System.out.println("입력값 : " + status);
-                System.out.println(listTest.get(i));
-//                list.addAll(list.size(), listTest.get(i));
-                list.add(0, listTest.get(i));
+        for (int i = 0; i < courseStateList.size(); i++){
+            if(courseStateList.get(i).getStatus() == status && !courseStateList.get(i).isHidden()){
+                list.add(0, courseStateList.get(i).getName());
             }
         }
-
         return list;
     }
 
     public List<ZerobaseCourse> getOpenZerobaseCourse(LocalDate targetDt) {
         // TODO: status = "OPEN" 이고, hidden = false 이며,
         //  startAt <= targetDt && targetDt <= endAt 인 강의만 조회되어야함.
-        return null;
+
+        List<ZerobaseCourse> openCourseList = repository.findAll();
+        List list = new ArrayList<>();
+
+        for (int i = 0; i < openCourseList.size(); i++){
+            if(targetDt.isAfter(openCourseList.get(i).getStartAt()) && targetDt.isBefore(openCourseList.get(i).getEndAt())){
+                if (openCourseList.get(i).getStatus() == "OPEN" && !openCourseList.get(i).isHidden())
+                list.add(0, openCourseList.get(i).getName());
+            }
+        }
+
+        return list;
     }
 }
